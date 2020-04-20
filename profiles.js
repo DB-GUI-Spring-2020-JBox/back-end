@@ -18,7 +18,13 @@ router.get('/api/profilesUser', async (req, res) => {
 		if (response.message == 'fail') return;
 		response.conn.query(`SELECT * FROM profiles where userName = "${req.body.user}"`, 
 		function (err, result, fields) {
-			res.send(JSON.stringify(result)); 
+			var text = JSON.stringify(result,  (key, value) => {
+				if (value[0].password == req.body.password) {
+					res.send(true);
+				} else {
+					res.send(false); 
+				}
+			  });
 		});
 	});
 });
