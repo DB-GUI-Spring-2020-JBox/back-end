@@ -3,6 +3,27 @@ var express = require('express');
 var router = express.Router();
 
 
+router.get('/api/home', async (req, res) => {
+	con.getConnection(res, (response) => {
+		if (response.message == 'fail') return;
+		response.conn.query("SELECT * FROM articles LIMIT 10", function (err, result, fields) {	
+			res.send(JSON.stringify(result)); 
+		});
+	});
+});
+
+
+router.get('/api/home/userID', async (req, res) => {
+	con.getConnection(res, (response) => {
+		if (response.message == 'fail') return;
+		response.conn.query(`SELECT * FROM articles where author = ${req.body.author} LIMIT 10`,
+		 function (err, result, fields) {	
+			res.send(JSON.stringify(result)); 
+		});
+	});
+});
+
+
 router.get('/api/articles', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
