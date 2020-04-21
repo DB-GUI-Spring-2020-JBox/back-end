@@ -34,6 +34,19 @@ router.get('/api/followerByID', async (req, res) => {
 	});
 });
 
+// get both followers and followeds of this ID
+router.get('/api/followByID', async (req, res) => {
+	con.getConnection(res, (response) => {
+		if (response.message == 'fail') return;
+		response.conn.query(`SELECT * FROM follows where follower = ${req.body.follow}
+		or followed = ${req.body.follow}`,
+         function (err, result, fields) {	
+			res.send(JSON.stringify(result)); 
+		});
+	});
+});
+
+
 
 router.delete('/api/follows', async (req, res) => {
 	con.getConnection(res, (response) => {
