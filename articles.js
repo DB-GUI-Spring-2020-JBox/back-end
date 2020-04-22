@@ -6,7 +6,8 @@ var router = express.Router();
 router.get('/api/home', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-		response.conn.query("SELECT * FROM articles LIMIT 10", function (err, result, fields) {	
+		response.conn.query("SELECT * FROM articles ORDER BY datePosted DESC LIMIT 10", 
+		  function (err, result, fields) {	
 			res.send(JSON.stringify(result)); 
 		});
 	});
@@ -16,8 +17,8 @@ router.get('/api/home', async (req, res) => {
 router.get('/api/home/userID', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-		response.conn.query(`SELECT * FROM articles where author = ${req.body.author} LIMIT 10`,
-		 function (err, result, fields) {	
+		response.conn.query(`SELECT * FROM articles where author = ${req.body.author}
+		 ORDER BY datePosted DESC LIMIT 10`, function (err, result, fields) {	
 			res.send(JSON.stringify(result)); 
 		});
 	});
