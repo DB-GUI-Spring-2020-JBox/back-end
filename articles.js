@@ -25,6 +25,19 @@ router.get('/api/home/userID', async (req, res) => {
 });
 
 
+router.get('/api/articles/:articleId', async (req, res) => {
+	con.getConnection(res, (response) => {
+		if (response.message == 'fail') return;
+		response.conn.query("SELECT * FROM articles WHERE ID = ?", [req.params.articleId], function (err, result, fields) {	
+			if (err) {
+				res.send(err);
+			}
+			res.send(JSON.stringify(result));
+		});
+	});
+});
+
+
 router.get('/api/articles', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
