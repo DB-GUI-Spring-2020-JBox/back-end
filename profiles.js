@@ -13,18 +13,28 @@ router.get('/api/profiles', async (req, res) => {
 });
 
 // get one row by user name (user)
-router.get('/api/profilesUser', async (req, res) => {
+router.get('/api/profilesUser/:userId', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-		response.conn.query(`SELECT * FROM profiles where userName = "${req.body.user}"`, 
+		response.conn.query(`SELECT * FROM profiles where ID = "${req.params.userId}"`, 
 		function (err, result, fields) {
-			var text = JSON.stringify(result,  (key, value) => {
-				if (value[0].password == req.body.password) {
-					res.send(true);
-				} else {
-					res.send(false); 
-				}
-			  });
+			res.send(result);
+		});
+	});
+});
+
+
+// login
+router.post('/api/login', (req, res) => {
+	con.getConnection(res, (response) => {
+		if (response.message == 'fail') return;
+		response.conn.query(`SELECT * FROM profiles where userName = "${req.body.username}"`, 
+		function (err, result, fields) {
+			if (result[0].password == req.body.password) {
+				res.send({status: true, account: result[0]});
+			} else {
+				res.send({ status: false }); 
+			}
 		});
 	});
 });
