@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 
-//create the mysql connection object.  
+//create the mysql connection object.
 var connPool = mysql.createPool({
     connectionLimit: 100,
     user: "msegal",
