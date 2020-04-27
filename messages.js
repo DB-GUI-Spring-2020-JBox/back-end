@@ -13,10 +13,10 @@ router.get('/api/messages', async (req, res) => {
 });
 
 
-router.get('/api/messagesSender', async (req, res) => {
+router.get('/api/messagesSender/:senderId', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-		response.conn.query(`SELECT * FROM messages where sender = ${req.body.sender}`,
+		response.conn.query(`SELECT * FROM messages where sender = ${req.params.senderId} or receiver = ${req.params.senderId}`,
 		 function (err, result, fields) {
 			res.send(JSON.stringify(result));
 		});
@@ -56,6 +56,15 @@ router.post('/api/messages',async (req, res) => {
 });
 
 
+router.put('/api/messages/:messageId',async (req, res) => {
+	con.getConnection(res, (response) => {
+		if (response.message == 'fail') return;
+		response.conn.query(`UPDATE messages SET content = "${req.body.content}" WHERE ID = ${req.params.messageId}`,
+		function (err, result, fields) {
+					res.send(JSON.stringify(result));
+		});
+	});
+});
 
 
 
