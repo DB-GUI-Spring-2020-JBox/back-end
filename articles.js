@@ -47,7 +47,17 @@ router.get('/api/articles', async (req, res) => {
 		res.send(results);
 	  });
 	});
+});
+
+router.put('/api/articles/:articleId', async (req, res) => {
+	con.getConnection(res, (response) => {
+	  if (response.message == 'fail') return;
+    response.conn.query(`UPDATE articles SET title = "${req.body.title}", content = "${req.body.content}", category = "${req.body.category}", image = "${req.body.image || ""}"
+    WHERE ID = ${req.params.articleId}`, function(err, results, fields) {
+		res.send(results);
+	  });
   });
+});
 
 //WHERE category = ${req.body.category}
 
