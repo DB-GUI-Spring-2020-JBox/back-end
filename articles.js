@@ -40,6 +40,14 @@ router.get('/api/articles/:articleId', async (req, res) => {
   });
 });
 
+router.get('/api/articles', async (req, res) => {
+	con.getConnection(res, (response) => {
+	  if (response.message == 'fail') return;
+	  response.conn.query(`SELECT * FROM articles WHERE author = ${req.query.userId}`, function(err, results, fields) {
+		res.send(results);
+	  });
+	});
+  });
 
 //WHERE category = ${req.body.category}
 
