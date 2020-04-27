@@ -1,7 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 //create the express.js object
-const app = express();
+var app = express();
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 
 let profiles = require('./profiles');
@@ -10,13 +16,12 @@ let reviews = require('./reviews');
 let messages = require('./messages');
 let follows = require('./follows');
 
-// middleware to use for all requests
+// middleware  to use for all requests
 app.use(function(req, res, next) {
 	// do logging
 	console.log('Something is happening');
 	next();
 });
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
