@@ -53,6 +53,20 @@ router.post('/api/profiles',async (req, res) => {
 });
 
 
+router.put('/api/profiles/:userId',async (req, res) => {
+	con.getConnection(res, (response) => {
+		if (response.message == 'fail') return;
+		response.conn.query(`UPDATE profiles SET
+				name = "${req.body.name}", userName = "${req.body.userName}", email = "${req.body.email}", linkToFacebook = "${req.body.linkToFacebook}",
+				linkToInstagram = "${req.body.linkToInstagram}", linkToLinkedIn = "${req.body.linkToLinkedIn}", otherLink = "${req.body.otherLink}" 
+				${ req.body.password === "" ? "" : `${req.body.password}` } WHERE ID = ${req.params.userId}`,function (err, result, fields) {
+					if (err)
+						console.error(err);
+					res.send(JSON.stringify(result));
+		});
+	});
+});
+
 
 router.delete('/api/profiles', async (req, res) => {
 	con.getConnection(res, (response) => {
