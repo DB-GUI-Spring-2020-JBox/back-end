@@ -33,16 +33,6 @@ router.get('/api/articles/:articleId', async (req, res) => {
 				res.send(err);
 			}
 			res.send(JSON.stringify(result));
-    });
-	});
-});
-
-router.get('/api/browse/category', async (req, res) => {
-	con.getConnection(res, (response) => {
-		if (response.message == 'fail') return;
-		response.conn.query(`SELECT * FROM articles where category = "${req.body.category}"`,
-		 function (err, result, fields) {	
-			res.send(JSON.stringify(result)); 
 		});
 	});
 });
@@ -51,9 +41,16 @@ router.get('/api/browse/category', async (req, res) => {
 router.get('/api/articles', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-		response.conn.query("SELECT * FROM articles", function (err, result, fields) {	
-			res.send(JSON.stringify(result)); 
-		});
+		if (req.query.userId) {
+			response.conn.query("SELECT * FROM articles WHERE author = ?", [req.query.userId], function (err, result, fields) {	
+				res.send(JSON.stringify(result)); 
+			});
+		}
+		else {
+			response.conn.query("SELECT * FROM articles", function (err, result, fields) {	
+				res.send(JSON.stringify(result)); 
+			});
+		}
 	});
 });
 
@@ -61,20 +58,20 @@ router.get('/api/articles', async (req, res) => {
 router.post('/api/articles',async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-		response.conn.query(`INSERT INTO articles (title,content,author,price,image,category) VALUES 
+		response.conn.query(`INSERT INTO articles (title,content,author,price,image) VALUES 
                 ("${req.body.title}","${req.body.cont}",${req.body.author},${req.body.price},
-                "${req.body.image}","${req.body.category}")`,function (err, result, fields) {
+                "${req.body.image}")`,function (err, result, fields) {
 					res.send(JSON.stringify(result)); 
 		});
 	});
 });
 
 
-router.delete('/api/articles', async (req, res) => {
+router.delete('/api/articles/:articleId', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-		response.conn.query(`delete from articles where ID = ${req.body.id}`,function (err, result, fields) {
-					res.send(JSON.stringify(result)); 
+		response.conn.query(`delete from articles where ID = ${req.params.articleId}`,function (err, result, fields) {
+			res.send(JSON.stringify(result)); 
 		});
 	});
 });
