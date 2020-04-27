@@ -6,8 +6,8 @@ var router = express.Router();
 router.get('/api/follows', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-		response.conn.query("SELECT * FROM follows", function (err, result, fields) {	
-			res.send(JSON.stringify(result)); 
+		response.conn.query("SELECT * FROM follows", function (err, result, fields) {
+			res.send(JSON.stringify(result));
 		});
 	});
 });
@@ -16,20 +16,20 @@ router.get('/api/follows', async (req, res) => {
 router.get('/api/followedByID', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-        response.conn.query(`SELECT * FROM follows where followed = ${req.body.followed}`,
-         function (err, result, fields) {	
-			res.send(JSON.stringify(result)); 
+        response.conn.query(`SELECT * FROM follows where followed = ${req.query.followed}`,
+         function (err, result, fields) {
+			res.send(JSON.stringify(result));
 		});
 	});
 });
 
-
+ 
 router.get('/api/followerByID', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-        response.conn.query(`SELECT * FROM follows where follower = ${req.body.follower}`,
-         function (err, result, fields) {	
-			res.send(JSON.stringify(result)); 
+        response.conn.query(`SELECT * FROM follows where follower = ${req.query.follower}`,
+         function (err, result, fields) {
+			res.send(JSON.stringify(result));
 		});
 	});
 });
@@ -38,10 +38,11 @@ router.get('/api/followerByID', async (req, res) => {
 router.get('/api/followByID', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-		response.conn.query(`SELECT * FROM follows where follower = ${req.body.follow}
-		or followed = ${req.body.follow}`,
-         function (err, result, fields) {	
-			res.send(JSON.stringify(result)); 
+		response.conn.query(`SELECT * FROM follows where follower = ${req.query.follow}
+		or followed = ${req.query.follow}`,
+         function (err, result, fields) {
+			res.send(JSON.stringify(result));
+			console.log(JSON.stringify(req.query));
 		});
 	});
 });
@@ -51,9 +52,10 @@ router.get('/api/followByID', async (req, res) => {
 router.delete('/api/follows', async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-        response.conn.query(`delete from follows where follower = ${req.body.follower} AND 
-        followed = ${req.body.followed}`,function (err, result, fields) {
-					res.send(JSON.stringify(result)); 
+        response.conn.query(`delete from follows where follower = ${req.query.follower} AND
+        followed = ${req.query.followed}`,function (err, result, fields) {
+			console.log(req.query);
+					res.send(JSON.stringify(result));
 		});
 	});
 });
@@ -63,9 +65,9 @@ router.delete('/api/follows', async (req, res) => {
 router.post('/api/follows',async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-		response.conn.query(`INSERT INTO follows (follower,followed) VALUES 
+		response.conn.query(`INSERT INTO follows (follower,followed) VALUES
         (${req.body.follower},${req.body.followed});`,function (err, result, fields) {
-					res.send(JSON.stringify(result)); 
+			res.send(JSON.stringify(result));
 		});
 	});
 });
