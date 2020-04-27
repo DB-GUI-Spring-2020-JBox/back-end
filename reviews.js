@@ -10,6 +10,7 @@ router.get('/api/reviews', async (req, res) => {
 		});
 	});
 });
+//    response.conn.query(`SELECT * FROM articles INNER JOIN follows ON follows.followed = articles.author WHERE follower = ${req.params.uderId}`, function(err, results, fields) {
 
 router.delete('/api/reviews', async (req, res) => {
 	con.getConnection(res, (response) => {
