@@ -40,6 +40,28 @@ router.get('/api/articles/:articleId', async (req, res) => {
   });
 });
 
+router.get('/api/search/:input/:category/:filter', async (req, res) => {
+	con.getConnection(res, (response) => {
+	  if (response.message == 'fail') return;
+	  response.conn.query(`SELECT articles.*,
+    CASE WHEN "${req.params.filter}" = "date" THEN articles.datePosted
+      WHEN "${req.params.filter}" = "rating" THEN r.rank
+      ELSE articles.title
+      END AS sortCol
+      FROM articles 
+      LEFT OUTER JOIN profiles ON articles.author = profiles.ID 
+      LEFT OUTER JOIN (SELECT AVG(ranking) AS rank, author FROM reviews GROUP BY author) AS r ON articles.author = r.author
+      WHERE
+        ((profiles.name LIKE '%${req.params.input}%' AND "${req.params.filter}" != "article") OR (articles.title LIKE '%${req.params.input}%' AND "${req.params.filter}" != "author")) 
+          AND
+        (IF("${req.params.category}" != "", (articles.category = "${req.params.category}"), 1=1))
+      ORDER BY (sortCol) DESC
+      LIMIT 10;`, function(err, results, fields) {
+		res.send(results);
+	  });
+	});
+});
+
 router.get('/api/articles', async (req, res) => {
 	con.getConnection(res, (response) => {
 	  if (response.message == 'fail') return;
@@ -48,6 +70,8 @@ router.get('/api/articles', async (req, res) => {
 	  });
 	});
 });
+
+
 
 router.put('/api/articles/:articleId', async (req, res) => {
 	con.getConnection(res, (response) => {
