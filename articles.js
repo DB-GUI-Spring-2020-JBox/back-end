@@ -83,6 +83,17 @@ router.put('/api/articles/:articleId', async (req, res) => {
   });
 });
 
+router.post('/api/articles', async (req, res) => {
+  con.getConnection(res, (response) => {
+    if (response.message == 'fail') return;
+    response.conn.query(`INSERT INTO articles (title,content,author,image,category) VALUES
+                ("${req.body.title}","${req.body.content}",${req.body.author},
+                "${req.body.image}","${req.body.category}")`, function(err, result, fields) {
+      res.send(JSON.stringify(result));
+    });
+  });
+});
+
 //WHERE category = ${req.body.category}
 
 // router.get('/api/home', async (req, res) => {
