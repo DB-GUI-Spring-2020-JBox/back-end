@@ -33,11 +33,11 @@ router.get("/api/reviews", async (req, res) => {
   });
 });
 
-router.delete("/api/reviews", async (req, res) => {
+router.delete("/api/reviews/:reviewID", async (req, res) => {
   con.getConnection(res, (response) => {
     if (response.message == "fail") return;
     response.conn.query(
-      `delete from reviews where ID = ${req.body.id}`,
+      `delete from reviews where ID = ${req.params.reviewID}`,
       function (err, result, fields) {
         res.send(JSON.stringify(result));
       }
