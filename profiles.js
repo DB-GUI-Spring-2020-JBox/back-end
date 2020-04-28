@@ -40,6 +40,18 @@ router.post('/api/login', (req, res) => {
 });
 
 
+router.post('/api/register', (req, res) => {
+	con.getConnection(res, (response) => {
+		if (response.message == 'fail') return;
+		response.conn.query(`INSERT INTO profiles (name, userName, email, password) 
+			VALUES ("${req.body.name}", "${req.body.userName}", "${req.body.email}", "${req.body.password}")`,
+		function (err, result, fields) {
+			res.send(result);
+		});
+	});
+});
+
+
 router.post('/api/profiles',async (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
@@ -55,9 +67,10 @@ router.post('/api/profiles',async (req, res) => {
 
 router.put('/api/profiles/:userId',async (req, res) => {
 	con.getConnection(res, (response) => {
+		console.log(req.body);
 		if (response.message == 'fail') return;
 		response.conn.query(`UPDATE profiles SET
-				name = "${req.body.name}", userName = "${req.body.userName}", email = "${req.body.email}", linkToFacebook = "${req.body.linkToFacebook}",
+				name = "${req.body.name}", userName = "${req.body.userName}", bio = "${req.body.bio}", email = "${req.body.email}", linkToFacebook = "${req.body.linkToFacebook}",
 				linkToInstagram = "${req.body.linkToInstagram}", linkToLinkedIn = "${req.body.linkToLinkedIn}", otherLink = "${req.body.otherLink}" 
 				${ req.body.password === "" ? "" : `${req.body.password}` } WHERE ID = ${req.params.userId}`,function (err, result, fields) {
 					if (err)
