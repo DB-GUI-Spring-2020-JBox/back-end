@@ -48,7 +48,6 @@ router.get('/api/articles/:articleId', async (req, res) => {
 });
 
 router.get('/api/search/:input/:category/:filter', async (req, res) => {
-  console.log(req.params.input, req.params.category, req.params.filter)
   let holder = ''
   if(req.params.filter == "DESC" || req.params.filter == "ASC")
     holder = `ORDER BY datePosted ${req.params.filter}`
