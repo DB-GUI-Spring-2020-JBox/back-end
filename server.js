@@ -34,7 +34,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-const port = process.env.PORT || 3201;
+const port = process.env.PORT || 8000;
 app.listen(port, '0.0.0.0', () => console.log(`Listening on port ${port}..`));
 
 app.use(profiles);
