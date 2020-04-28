@@ -205,10 +205,10 @@ router.post('/api/articles', async (req, res) => {
 // });
 
 
-router.delete('/api/articles', async (req, res) => {
+router.delete('/api/articles/:articleId', async (req, res) => {
   con.getConnection(res, (response) => {
     if (response.message == 'fail') return;
-    response.conn.query(`delete from articles where ID = ${req.body.id}`, function(err, result, fields) {
+    response.conn.query(`delete from articles where ID = ${req.params.articleId}`, function(err, result, fields) {
       res.send(JSON.stringify(result));
     });
   });

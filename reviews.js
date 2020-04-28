@@ -6,7 +6,7 @@ router.get("/api/reviews/:id", async (req, res) => {
   con.getConnection(res, (response) => {
     if (response.message == "fail") return;
     response.conn.query(
-      `SELECT profiles.name, reviews.content, reviews.ranking, reviews.author, reviews.datePosted, reviews.ID
+      `SELECT profiles.name, reviews.content, reviews.ranking, reviews.author, reviews.datePosted, reviews.ID, articles.title, reviews.article 
 	  FROM reviews JOIN profiles
 	  ON reviews.author = profiles.ID
 	  INNER JOIN articles 
@@ -49,8 +49,8 @@ router.post("/api/reviews", async (req, res) => {
   con.getConnection(res, (response) => {
     if (response.message == "fail") return;
     response.conn.query(
-      `INSERT INTO reviews (ID,author,content,ranking,article) VALUES
-        (${req.body.ID},${req.body.author},"${req.body.content}",${req.body.ranking},${req.body.article});`,
+      `INSERT INTO reviews (author,content,ranking,article) VALUES
+        (${req.body.author},"${req.body.content}",${req.body.ranking},${req.body.article});`,
       function (err, result, fields) {
         res.send(JSON.stringify(result));
       }
