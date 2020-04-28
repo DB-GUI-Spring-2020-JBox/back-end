@@ -12,11 +12,12 @@ var connPool = mysql.createPool({
 function getConnection(res, callback) {
   connPool.getConnection((err, conn) => {
     if (err) {
-      logger.error(e.code);
+      console.error(e.code);
       res.status(500).json({message: 'Something went wrong'});
       callback({message: 'fail'});
     }
     callback({conn, message: 'succeed'});
+    conn.release();
   });
 }
 
