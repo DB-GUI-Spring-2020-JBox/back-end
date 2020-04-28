@@ -33,11 +33,11 @@ router.get("/api/reviews", async (req, res) => {
   });
 });
 
-router.delete("/api/reviews", async (req, res) => {
+router.delete("/api/reviews/:reviewID", async (req, res) => {
   con.getConnection(res, (response) => {
     if (response.message == "fail") return;
     response.conn.query(
-      `delete from reviews where ID = ${req.body.id}`,
+      `delete from reviews where ID = ${req.params.reviewID}`,
       function (err, result, fields) {
         res.send(JSON.stringify(result));
       }
@@ -51,6 +51,34 @@ router.post("/api/reviews", async (req, res) => {
     response.conn.query(
       `INSERT INTO reviews (author,content,ranking,article) VALUES
         (${req.body.author},"${req.body.content}",${req.body.ranking},${req.body.article});`,
+      function (err, result, fields) {
+        res.send(JSON.stringify(result));
+      }
+    );
+  });
+});
+
+router.put("/api/reviews/:reviewId", async (req, res) => {
+  con.getConnection(res, (response) => {
+    if (response.message == "fail") return;
+    response.conn.query(
+      `UPDATE reviews SET content = "${req.body.content}", ranking = ${req.body.ranking}, article = ${req.body.article}
+    WHERE ID = ${req.params.reviewId}`,
+      function (err, results, fields) {
+        res.send(results);
+      }
+    );
+  });
+});
+
+router.get("/api/reviewsIndiv/:reviewID", async (req, res) => {
+  con.getConnection(res, (response) => {
+    if (response.message == "fail") return;
+    response.conn.query(
+      `SELECT reviews.author, reviews.content, reviews.ranking, reviews.article, articles.title 
+		  FROM reviews INNER JOIN articles
+		  ON reviews.article = articles.ID
+		  WHERE reviews.ID = ${req.params.reviewID}`,
       function (err, result, fields) {
         res.send(JSON.stringify(result));
       }
