@@ -58,4 +58,17 @@ router.post("/api/reviews", async (req, res) => {
   });
 });
 
+router.put("/api/reviews/:reviewId", async (req, res) => {
+  con.getConnection(res, (response) => {
+    if (response.message == "fail") return;
+    response.conn.query(
+      `UPDATE reviews SET content = "${req.body.content}", ranking = ${req.body.ranking}, article = ${req.body.article}
+    WHERE ID = ${req.params.reviewId}`,
+      function (err, results, fields) {
+        res.send(results);
+      }
+    );
+  });
+});
+
 module.exports = router;
