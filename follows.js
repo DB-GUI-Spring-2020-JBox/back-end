@@ -73,6 +73,47 @@ router.post('/api/follows',async (req, res) => {
 });
 
 
+router.post('/api/blocks', (req, res) => {
+	con.getConnection(res, (response) => {
+		if (response.message == 'fail') return;
+		response.conn.query(`INSERT INTO blocks (blocker, blocked) VALUES
+        (${req.body.blocker}, ${req.body.blocked});`,function (err, result, fields) {
+			res.send(JSON.stringify(result));
+		});
+	});
+});
+
+
+router.delete('/api/blocks', (req, res) => {
+	con.getConnection(res, (response) => {
+		if (response.message == 'fail') return;
+		response.conn.query(`DELETE FROM blocks WHERE blocker = ${req.query.blocker} AND blocked = ${req.query.blocked}`,function (err, result, fields) {
+			res.send(JSON.stringify(result));
+		});
+	});
+});
+
+
+router.get('/api/blocks', (req, res) => {
+	con.getConnection(res, (response) => {
+		if (response.message == 'fail') return;
+		if (req.params.blocker && req.params.blocked) {
+			response.conn.query(`SELECT * FROM blocks WHERE blocker = ${req.query.blocker} AND blocked = ${req.query.blocked}`,function (err, result, fields) {
+				res.send(JSON.stringify(result));
+			});
+		}
+		else if (req.params.blocker) {
+			response.conn.query(`SELECT * FROM blocks WHERE blocker = ${req.query.blocker} OR blocked = ${req.query.blocker}`,function (err, result, fields) {
+				res.send(JSON.stringify(result));
+			});
+		}
+		else {
+			response.conn.query(`SELECT * FROM blocks`,function (err, result, fields) {
+				res.send(JSON.stringify(result));
+			});
+		}
+	});
+});
 
 
 module.exports = router;
