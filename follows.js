@@ -97,12 +97,14 @@ router.delete('/api/blocks', (req, res) => {
 router.get('/api/blocks', (req, res) => {
 	con.getConnection(res, (response) => {
 		if (response.message == 'fail') return;
-		if (req.params.blocker && req.params.blocked) {
+		console.log(req.query.blocker);
+		console.log(req.query.blocked);
+		if (req.query.blocker && req.query.blocked) {
 			response.conn.query(`SELECT * FROM blocks WHERE blocker = ${req.query.blocker} AND blocked = ${req.query.blocked}`,function (err, result, fields) {
 				res.send(JSON.stringify(result));
 			});
 		}
-		else if (req.params.blocker) {
+		else if (req.query.blocker) {
 			response.conn.query(`SELECT * FROM blocks WHERE blocker = ${req.query.blocker} OR blocked = ${req.query.blocker}`,function (err, result, fields) {
 				res.send(JSON.stringify(result));
 			});
