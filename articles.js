@@ -6,25 +6,30 @@ var router = express.Router();
 router.get('/api/home', async (req, res) => {
   con.getConnection(res, (response) => {
     if (response.message == 'fail') return;
-    response.conn.query(`SELECT * FROM articles ORDER BY datePosted DESC LIMIT 10`, function(err, results, fields) {
+    response.conn.query(`SELECT ID, title, content, author AS authorId, (SELECT name FROM profiles WHERE profiles.ID = articles.author) AS author, price, datePosted, dateUpdated, image, category FROM articles ORDER BY datePosted DESC LIMIT 10`, function(err, results, fields) {
       res.send(results);
     });
   });
 });
 
-router.get('/api/home/:userID', async (req, res) => {
+
+router.get('/api/home/:userId', async (req, res) => {
   con.getConnection(res, (response) => {
     if (response.message == 'fail') return;
-    response.conn.query(`SELECT * FROM articles ORDER BY datePosted DESC LIMIT 10`, function(err, results, fields) {
+     response.conn.query(`SELECT ID, title, content, author AS authorId, (SELECT name FROM profiles WHERE profiles.ID = articles.author) AS author, price, datePosted, dateUpdated, image, category FROM articles`, function(err, results, fields) {
+    // response.conn.query(`SELECT * FROM articles INNER JOIN follows ON follows.followed = articles.author WHERE follower = ${req.params.userId}`, function(err, results, fields) {
+      console.log(results);
       res.send(results);
     });
   });
 });
+
+
 
 router.get('/api/browse/:category', async (req, res) => {
   con.getConnection(res, (response) => {
     if (response.message == 'fail') return;
-    response.conn.query(`SELECT * FROM articles WHERE LOWER(category) = LOWER('${req.params.category}') ORDER BY datePosted DESC`, function(err, results, fields) {
+    response.conn.query(`SELECT ID, title, content, author AS authorId, (SELECT name FROM profiles WHERE profiles.ID = articles.author) AS author, price, datePosted, dateUpdated, image, category FROM articles WHERE LOWER(category) = LOWER('${req.params.category}') ORDER BY datePosted DESC`, function(err, results, fields) {
       res.send(results);
     });
   });
@@ -34,7 +39,7 @@ router.get('/api/browse/:category', async (req, res) => {
 router.get('/api/articles/:articleId', async (req, res) => {
   con.getConnection(res, (response) => {
     if (response.message == 'fail') return;
-    response.conn.query(`SELECT * FROM articles WHERE ID = ${req.params.articleId} ORDER BY datePosted DESC`, function(err, results, fields) {
+    response.conn.query(`SELECT ID, title, content, author AS authorId, (SELECT name FROM profiles WHERE profiles.ID = articles.author) AS authorName, price, datePosted, dateUpdated, image, category FROM articles WHERE ID = ${req.params.articleId} ORDER BY datePosted DESC`, function(err, results, fields) {
       res.send(results);
     });
   });
@@ -80,6 +85,17 @@ router.put('/api/articles/:articleId', async (req, res) => {
     WHERE ID = ${req.params.articleId}`, function(err, results, fields) {
 		res.send(results);
 	  });
+  });
+});
+
+router.post('/api/articles', async (req, res) => {
+  con.getConnection(res, (response) => {
+    if (response.message == 'fail') return;
+    response.conn.query(`INSERT INTO articles (title,content,author,image,category) VALUES
+                ("${req.body.title}","${req.body.content}",${req.body.author},
+                "${req.body.image}","${req.body.category}")`, function(err, result, fields) {
+      res.send(JSON.stringify(result));
+    });
   });
 });
 
@@ -140,10 +156,10 @@ router.put('/api/articles/:articleId', async (req, res) => {
 // });
 
 
-router.delete('/api/articles', async (req, res) => {
+router.delete('/api/articles/:articleId', async (req, res) => {
   con.getConnection(res, (response) => {
     if (response.message == 'fail') return;
-    response.conn.query(`delete from articles where ID = ${req.body.id}`, function(err, result, fields) {
+    response.conn.query(`delete from articles where ID = ${req.params.articleId}`, function(err, result, fields) {
       res.send(JSON.stringify(result));
     });
   });
