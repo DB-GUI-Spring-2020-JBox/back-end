@@ -71,4 +71,19 @@ router.put("/api/reviews/:reviewId", async (req, res) => {
   });
 });
 
+router.get("/api/reviewsIndiv/:reviewID", async (req, res) => {
+  con.getConnection(res, (response) => {
+    if (response.message == "fail") return;
+    response.conn.query(
+      `SELECT reviews.author, reviews.content, reviews.ranking, reviews.article, articles.title 
+		  FROM reviews INNER JOIN articles
+		  ON reviews.article = articles.ID
+		  WHERE reviews.ID = ${req.params.reviewID}`,
+      function (err, result, fields) {
+        res.send(JSON.stringify(result));
+      }
+    );
+  });
+});
+
 module.exports = router;
