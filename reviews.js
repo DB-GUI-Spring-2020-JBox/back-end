@@ -6,10 +6,12 @@ router.get("/api/reviews/:id", async (req, res) => {
   con.getConnection(res, (response) => {
     if (response.message == "fail") return;
     response.conn.query(
-      `SELECT name, content, ranking, author, datePosted
-	  FROM reviews JOIN profiles 
+      `SELECT profiles.name, reviews.content, reviews.ranking, reviews.author, reviews.datePosted, reviews.ID
+	  FROM reviews JOIN profiles
 	  ON reviews.author = profiles.ID
-	  WHERE reviews.ID = ${req.params.id}`,
+	  INNER JOIN articles 
+	  ON reviews.article = articles.ID
+	  WHERE articles.author = ${req.params.id}`,
       function (err, result, fields) {
         res.send(JSON.stringify(result));
       }
