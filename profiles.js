@@ -30,7 +30,7 @@ router.post('/api/login', (req, res) => {
 		if (response.message == 'fail') return;
 		response.conn.query(`SELECT * FROM profiles where userName = "${req.body.username}"`,
 		function (err, result, fields) {
-			if (result[0].password == req.body.password) {
+			if (result[0] && result[0].password == req.body.password) {
 				res.send({status: true, account: result[0]});
 			} else {
 				res.send({ status: false });
